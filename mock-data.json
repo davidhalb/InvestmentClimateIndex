@@ -1,0 +1,54 @@
+{
+  "updatedAt": "2026-02-04T13:42:00Z",
+  "score": 54,
+  "label": "Neutral",
+  "change24h": 3.2,
+  "dca": {
+    "stocks": 62,
+    "crypto": 48
+  },
+  "dcaHistory": [
+    { "date": "2026-01-28", "stocks": 55, "crypto": 44 },
+    { "date": "2026-01-29", "stocks": 53, "crypto": 46 },
+    { "date": "2026-01-30", "stocks": 50, "crypto": 42 },
+    { "date": "2026-01-31", "stocks": 57, "crypto": 45 },
+    { "date": "2026-02-01", "stocks": 60, "crypto": 47 },
+    { "date": "2026-02-02", "stocks": 61, "crypto": 49 },
+    { "date": "2026-02-03", "stocks": 62, "crypto": 48 }
+  ],
+  "categories": [
+    { "name": "Macro Economic", "score": 72, "change": 5.1, "summary": "Fed signals extended rate pause" },
+    { "name": "Micro Economic", "score": 48, "change": -2.3, "summary": "Mixed earnings, guidance soft" },
+    { "name": "Stock Markets", "score": 58, "change": 1.8, "summary": "Risk appetite improving" },
+    { "name": "Crypto", "score": 78, "change": 8.4, "summary": "ETF inflows support momentum" },
+    { "name": "Political", "score": 28, "change": -12.1, "summary": "Trade tensions resurface" },
+    { "name": "Sentiment", "score": 42, "change": -4.5, "summary": "Retail sentiment cautious" }
+  ],
+  "history": [
+    { "date": "2026-01-28", "score": 48 },
+    { "date": "2026-01-29", "score": 45 },
+    { "date": "2026-01-30", "score": 42 },
+    { "date": "2026-01-31", "score": 47 },
+    { "date": "2026-02-01", "score": 51 },
+    { "date": "2026-02-02", "score": 52 },
+    { "date": "2026-02-03", "score": 54 }
+  ],
+  "drivers": {
+    "positive": [
+      "Fed signals extended rate pause through Q2",
+      "Bitcoin ETF sees record $800M daily inflow",
+      "Strong earnings from tech sector leaders"
+    ],
+    "negative": [
+      "US-China trade tensions escalate",
+      "Reddit sentiment turns bearish on tech"
+    ]
+  },
+  "stats": {
+    "articlesAnalyzed": 847,
+    "dataSources": 6,
+    "dataQuality": 87,
+    "updateFrequency": "4h"
+  },
+  "sources": ["GDELT", "CryptoPanic", "Alpha Vantage", "Finnhub", "Reddit"]
+}

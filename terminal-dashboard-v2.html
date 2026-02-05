@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Climate Index</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #0f0f11;
+            --bg-tertiary: #18181b;
+            --border: #27272a;
+            --border-subtle: #1f1f23;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+            --text-dim: #3f3f46;
+            --bar-filled: #e4e4e7;
+            --bar-empty: #27272a;
+            --accent: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .brand {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* Main Score Card */
+        .score-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .score-main {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .score-value {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+        }
+
+        .score-max {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-dim);
+        }
+
+        .score-meta {
+            text-align: right;
+        }
+
+        .score-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .score-change {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ASCII Bar */
+        .main-bar {
+            margin-bottom: 12px;
+        }
+
+        .bar-track {
+            height: 8px;
+            background: var(--bar-empty);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--text-dim) 0%, var(--bar-filled) 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 3px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(255,255,255,0.3);
+        }
+
+        .bar-ascii {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-top: 12px;
+        }
+
+        .bar-ascii .filled { color: var(--bar-filled); }
+        .bar-ascii .empty { color: var(--bar-empty); }
+
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 9px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .category-name {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .category-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-bar {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .category-bar .filled { color: var(--bar-filled); }
+        .category-bar .empty { color: var(--bar-empty); }
+
+        .category-detail {
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .region-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 2px 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            margin-right: 6px;
+            color: var(--text-secondary);
+        }
+
+        /* History Section */
+        .section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .history-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .history-date {
+            width: 56px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .history-bar {
+            flex: 1;
+            letter-spacing: 0.5px;
+        }
+
+        .history-bar .filled { color: var(--bar-filled); }
+        .history-bar .empty { color: var(--bar-empty); }
+
+        .history-score {
+            width: 28px;
+            text-align: right;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Drivers */
+        .drivers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .drivers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .driver-column h4 {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .driver-column h4 .arrow {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .driver-list {
+            list-style: none;
+        }
+
+        .driver-list li {
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .driver-list li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .driver-list .dash {
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+
+        /* Stats Footer */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 32px;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
+        }
+
+        .footer span {
+            margin: 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-row">
+                <span class="brand">Investment Climate Index</span>
+                <div class="status">
+                    <span id="statusDot" class="status-dot"></span>
+                    <span id="statusText">Live</span>
+                </div>
+            </div>
+            <div id="timestamp" class="timestamp">--</div>
+        </header>
+
+        <!-- Main Score -->
+        <div class="score-card">
+            <div class="score-header">
+                <div class="score-main">
+                    <span id="scoreValue" class="score-value">--</span>
+                    <span class="score-max">/100</span>
+                </div>
+                <div class="score-meta">
+                    <div id="scoreLabel" class="score-label">--</div>
+                    <div id="scoreChange" class="score-change">--</div>
+                </div>
+            </div>
+
+            <div class="main-bar">
+                <div class="bar-track">
+                    <div id="barFill" class="bar-fill" style="width: 0%"></div>
+                    <div id="barIndicator" class="bar-indicator" style="left: 0%"></div>
+                </div>
+            </div>
+
+            <div id="barAscii" class="bar-ascii"></div>
+
+            <div class="bar-labels">
+                <span>Unfavorable</span>
+                <span>Favorable</span>
+            </div>
+            <div id="dcaInvestmentIndicator" style="margin-top: 12px; font-size: 11px; color: var(--text-dim);">
+                DCA Investments — --
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="section" style="padding: 18px 24px;">
+            <div
+                class="section-title"
+                style="margin-bottom: 12px;"
+                title="DCA scores combine category signals into a 0–100 readiness score for dollar-cost averaging."
+            >
+                DCA Readiness
+            </div>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div class="category-card" style="flex: 1; min-width: 180px;">
+                    <div class="category-header">
+                        <span class="category-name">Stocks</span>
+                        <span id="dcaStocks" class="category-score">--</span>
+                    </div>
+                    <div class="category-detail">
+                        <span id="dcaStocksLabel">--</span> · Dollar‑cost averaging signal
+                    </div>
+                </div>
+                <div class="category-card" style="flex: 1; min-width: 180px;">
+                    <div class="category-header">
+                        <span class="category-name">Crypto</span>
+                        <span id="dcaCrypto" class="category-score">--</span>
+                    </div>
+                    <div class="category-detail">
+                        <span id="dcaCryptoLabel">--</span> · Dollar‑cost averaging signal
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="categoriesGrid" class="categories-grid"></div>
+
+        <!-- 7-Day History -->
+        <div class="section">
+            <div class="section-title">7-Day History</div>
+            <div id="historyRows"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DCA History</div>
+            <div id="dcaHistoryRows"></div>
+        </div>
+
+        <!-- Key Drivers -->
+        <div class="section">
+            <div class="section-title">Key Drivers</div>
+            <div class="drivers-grid">
+                <div class="driver-column">
+                    <h4><span class="arrow">↑</span> Positive</h4>
+                    <ul id="positiveDrivers" class="driver-list"></ul>
+                </div>
+                <div class="driver-column">
+                    <h4><span class="arrow">↓</span> Negative</h4>
+                    <ul id="negativeDrivers" class="driver-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div id="statArticles" class="stat-value">--</div>
+                <div class="stat-label">Articles</div>
+            </div>
+            <div class="stat-item">
+                <div id="statSources" class="stat-value">--</div>
+                <div class="stat-label">Sources</div>
+            </div>
+            <div class="stat-item">
+                <div id="statQuality" class="stat-value">--</div>
+                <div class="stat-label">Quality</div>
+            </div>
+            <div class="stat-item">
+                <div id="statRefresh" class="stat-value">--</div>
+                <div class="stat-label">Refresh</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            Coverage: US · EU · China&nbsp;&nbsp;|&nbsp;&nbsp;Sources: <span id="sourcesList">—</span>
+        </footer>
+    </div>
+
+    <script>
+        const bandIndex = (score) => {
+            if (score >= 70) {
+                return { label: "Favorable", color: "#e4e4e7" };
+            }
+            if (score >= 55) {
+                return { label: "Constructive", color: "#e4e4e7" };
+            }
+            if (score >= 45) {
+                return { label: "Neutral", color: "#e4e4e7" };
+            }
+            if (score >= 30) {
+                return { label: "Cautious", color: "#e4e4e7" };
+            }
+            return { label: "Risk-Off", color: "#e4e4e7" };
+        };
+
+        const formatUtc = (iso) => {
+            const date = new Date(iso);
+            return `${date.toLocaleString('en-US', {
+                timeZone: 'UTC',
+                month: 'short',
+                day: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })} UTC`;
+        };
+
+        const minutesAgo = (iso) => {
+            const now = new Date();
+            const then = new Date(iso);
+            return Math.max(0, Math.round((now - then) / 60000));
+        };
+
+        const makeAsciiBar = (score, total = 20) => {
+            const filled = Math.round((score / 100) * total);
+            const empty = total - filled;
+            return `<span class="filled">${'█'.repeat(filled)}</span><span class="empty">${'░'.repeat(empty)}</span>`;
+        };
+
+        const renderHeader = (data) => {
+            const timestamp = document.getElementById('timestamp');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const mins = minutesAgo(data.updatedAt);
+            const isStale = mins > 360;
+            timestamp.textContent = `${formatUtc(data.updatedAt)} · ${mins} min ago`;
+            statusText.textContent = isStale ? 'Stale' : 'Live';
+            statusDot.style.background = isStale ? '#f87171' : 'var(--text-muted)';
+        };
+
+        const renderScore = (data) => {
+            document.getElementById('scoreValue').textContent = data.score;
+            document.getElementById('scoreLabel').textContent = data.label || bandIndex(data.score).label;
+            document.getElementById('scoreChange').textContent = `${data.change24h >= 0 ? '+' : '−'}${Math.abs(data.change24h).toFixed(1)} vs 24h`;
+            document.getElementById('barFill').style.width = `${data.score}%`;
+            document.getElementById('barIndicator').style.left = `${data.score}%`;
+            document.getElementById('barAscii').innerHTML = makeAsciiBar(data.score);
+        };
+
+        const renderCategories = (data) => {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = data.categories.map((cat) => `
+                <div class="category-card">
+                    <div class="category-header">
+                        <span class="category-name">${cat.name}</span>
+                        <span class="category-score">${cat.score}</span>
+                    </div>
+                    <div class="category-bar">${makeAsciiBar(cat.score, 10)}</div>
+                    <div class="category-detail">${cat.summary || ''}</div>
+                </div>
+            `).join('');
+        };
+
+        const renderHistory = (data) => {
+            const rows = document.getElementById('historyRows');
+            rows.innerHTML = data.history.map((point) => {
+                const label = new Date(point.date).toLocaleString('en-US', { month: 'short', day: '2-digit' });
+                return `
+                    <div class="history-row">
+                        <span class="history-date">${label}</span>
+                        <span class="history-bar">${makeAsciiBar(point.score, 20)}</span>
+                        <span class="history-score">${point.score}</span>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        const renderDcaHistory = (data) => {
+            const rows = document.getElementById('dcaHistoryRows');
+            if (!rows || !data.dcaHistory) return;
+            rows.innerHTML = data.dcaHistory.map((point) => {
+                const label = new Date(point.date).toLocaleString('en-US', { month: 'short', day: '2-digit' });
+                return `
+                    <div class="history-row">
+                        <span class="history-date">${label}</span>
+                        <span class="history-bar">${makeAsciiBar(point.stocks, 10)} ${makeAsciiBar(point.crypto, 10)}</span>
+                        <span class="history-score">${point.stocks}/${point.crypto}</span>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        const renderDrivers = (data) => {
+            const positive = document.getElementById('positiveDrivers');
+            const negative = document.getElementById('negativeDrivers');
+            positive.innerHTML = data.drivers.positive.map((driver) => `<li><span class="dash">—</span>${driver}</li>`).join('');
+            negative.innerHTML = data.drivers.negative.map((driver) => `<li><span class="dash">—</span>${driver}</li>`).join('');
+        };
+
+        const renderStats = (data) => {
+            document.getElementById('statArticles').textContent = data.stats.articlesAnalyzed;
+            document.getElementById('statSources').textContent = data.stats.dataSources;
+            document.getElementById('statQuality').textContent = `${data.stats.dataQuality}%`;
+            document.getElementById('statRefresh').textContent = data.stats.updateFrequency;
+            document.getElementById('sourcesList').textContent = data.sources.join(' · ');
+        };
+
+        const renderDca = (data) => {
+            document.getElementById('dcaStocks').textContent = data.dca?.stocks ?? '--';
+            document.getElementById('dcaCrypto').textContent = data.dca?.crypto ?? '--';
+            document.getElementById('dcaStocksLabel').textContent = data.dca?.stocks != null ? bandIndex(data.dca.stocks).label : '--';
+            document.getElementById('dcaCryptoLabel').textContent = data.dca?.crypto != null ? bandIndex(data.dca.crypto).label : '--';
+            const indicator = document.getElementById('dcaInvestmentIndicator');
+            if (indicator && data.dca) {
+                const avg = (data.dca.stocks + data.dca.crypto) / 2;
+                indicator.textContent = `DCA Investments — ${avg >= 55 ? 'Favorable' : 'Not Favorable'}`;
+            }
+        };
+
+        fetch('/index.json')
+            .then((res) => res.json())
+            .then((data) => {
+                renderHeader(data);
+                renderScore(data);
+                renderDca(data);
+                renderCategories(data);
+                renderHistory(data);
+                renderDcaHistory(data);
+                renderDrivers(data);
+                renderStats(data);
+            })
+            .catch(() => {
+                fetch('/mock-data.json')
+                    .then((res) => res.json())
+                    .then((data) => {
+                        renderHeader(data);
+                        renderScore(data);
+                        renderDca(data);
+                        renderCategories(data);
+                        renderHistory(data);
+                        renderDcaHistory(data);
+                        renderDrivers(data);
+                        renderStats(data);
+                    })
+                    .catch(() => {});
+            });
+    </script>
+</body>
+</html>

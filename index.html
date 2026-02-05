@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Climate Index</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-elevated: #111111;
+            --bg-hover: #1a1a1a;
+            --border: #222222;
+            --text-primary: #e5e5e5;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #ffffff;
+            --bar-filled: #d4d4d4;
+            --bar-empty: #2a2a2a;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .date {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Main Score */
+        .main-score {
+            margin-bottom: 32px;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .score-number {
+            font-size: 72px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--accent);
+        }
+
+        .score-max {
+            font-size: 24px;
+            color: var(--text-muted);
+        }
+
+        .score-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* ASCII Progress Bar */
+        .ascii-bar {
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: var(--bar-filled);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .ascii-bar .empty {
+            color: var(--bar-empty);
+        }
+
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        /* DCA */
+        .dca-section {
+            margin-bottom: 48px;
+        }
+
+        .dca-meta {
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .dca-badges {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Categories */
+        .categories {
+            margin-bottom: 48px;
+        }
+
+        .category-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 40px;
+            gap: 16px;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-row:last-child {
+            border-bottom: none;
+        }
+
+        .category-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .category-bar {
+            font-size: 14px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .category-bar .filled {
+            color: var(--bar-filled);
+        }
+
+        .category-bar .empty {
+            color: var(--bar-empty);
+        }
+
+        .category-score {
+            font-size: 14px;
+            text-align: right;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .category-detail {
+            grid-column: 2 / -1;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding-left: 4px;
+            margin-top: -8px;
+            padding-bottom: 4px;
+        }
+
+        /* Drivers */
+        .drivers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 600px) {
+            .drivers {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .driver-section h3 {
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .driver-section h3 .arrow {
+            font-size: 12px;
+        }
+
+        .driver-list {
+            list-style: none;
+        }
+
+        .driver-list li {
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .driver-list li:last-child {
+            border-bottom: none;
+        }
+
+        .driver-list .bullet {
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+        }
+
+        /* Historical */
+        .historical {
+            margin-bottom: 48px;
+        }
+
+        .historical-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 12px;
+        }
+
+        .historical-date {
+            width: 60px;
+            color: var(--text-muted);
+        }
+
+        .historical-bar {
+            flex: 1;
+            letter-spacing: 1px;
+        }
+
+        .historical-bar .filled {
+            color: var(--bar-filled);
+        }
+
+        .historical-bar .empty {
+            color: var(--bar-empty);
+        }
+
+        .historical-score {
+            width: 30px;
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* Subtle hover effects */
+        .category-row:hover {
+            background: var(--bg-hover);
+            margin: 0 -12px;
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        .driver-list li:hover {
+            color: var(--text-primary);
+        }
+
+        /* Change indicators */
+        .change {
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .change.up {
+            color: var(--text-secondary);
+        }
+
+        .change.down {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <span class="title">Global Investment Climate Index</span>
+                <div class="live-indicator">
+                    <span id="liveDot" class="live-dot"></span>
+                    <span id="liveStatus">Live</span>
+                </div>
+            </div>
+            <div id="timestamp" class="date">--</div>
+        </header>
+
+        <!-- Top Stats -->
+        <section class="stats" style="padding-top: 0; border-top: 0; margin-bottom: 32px;">
+            <div class="stat">
+                <div id="statArticles" class="stat-value">--</div>
+                <div class="stat-label">Articles</div>
+            </div>
+            <div class="stat">
+                <div id="statSources" class="stat-value">--</div>
+                <div class="stat-label">Sources</div>
+            </div>
+            <div class="stat">
+                <div id="statQuality" class="stat-value">--</div>
+                <div class="stat-label">Quality</div>
+            </div>
+            <div class="stat">
+                <div id="statRefresh" class="stat-value">--</div>
+                <div class="stat-label">Refresh</div>
+            </div>
+        </section>
+
+        <!-- Regular Investor View -->
+        <section class="main-score">
+            <div class="section-header">Market Climate</div>
+            <div class="score-display">
+                <span id="scoreValue" class="score-number">--</span>
+                <span class="score-max">/100</span>
+            </div>
+            <div id="scoreLabel" class="score-label">--</div>
+            <div id="mainBar" class="ascii-bar"></div>
+            <div class="bar-labels">
+                <span>Unfavorable</span>
+                <span>Favorable</span>
+            </div>
+            <div class="dca-meta">
+                <span id="scoreChange">--</span>
+            </div>
+        </section>
+
+        <!-- How to Read the Index -->
+        <section class="historical">
+            <div class="section-header">How to Read the Index</div>
+            <div class="category-detail">
+                <strong>Market Climate</strong> shows the overall market environment (0–100). Higher means a more favorable environment for risk‑taking.
+            </div>
+            <div class="category-detail">
+                <strong>DCA Readiness</strong> is separate and focuses on long‑term, steady buying conditions. It blends macro, political and asset‑specific signals.
+            </div>
+            <div class="category-detail">
+                <strong>Labels</strong> map to the score: Risk‑Off (0–29), Cautious (30–44), Neutral (45–54), Constructive (55–69), Favorable (70–100).
+            </div>
+        </section>
+
+        <!-- DCA Investor View -->
+        <section class="dca-section">
+            <div class="section-header">DCA Readiness</div>
+            <div class="score-display">
+                <span id="dcaOverall" class="score-number">--</span>
+                <span class="score-max">/100</span>
+            </div>
+            <div id="dcaLabel" class="score-label">--</div>
+            <div id="dcaBar" class="ascii-bar"></div>
+            <div class="bar-labels">
+                <span>Not Favorable</span>
+                <span>Favorable</span>
+            </div>
+            <div id="dcaInvestmentIndicator" class="dca-meta">DCA Investments — --</div>
+            <div class="dca-badges">
+                <span>DCA Stocks: <strong id="dcaStocks">--</strong></span>
+                <span>DCA Crypto: <strong id="dcaCrypto">--</strong></span>
+            </div>
+        </section>
+
+        <!-- Category Breakdown -->
+        <section class="categories">
+            <div class="section-header">Category Breakdown</div>
+            <div id="categoryList"></div>
+        </section>
+
+        <!-- 7-Day History -->
+        <section class="historical">
+            <div class="section-header">7-Day History</div>
+            <div id="historyRows"></div>
+        </section>
+
+        <!-- DCA History -->
+        <section class="historical">
+            <div class="section-header">DCA History</div>
+            <div id="dcaHistoryRows"></div>
+        </section>
+
+        <!-- Key Drivers -->
+        <section class="drivers">
+            <div class="driver-section">
+                <h3><span class="arrow">↑</span> Positive Drivers</h3>
+                <ul id="positiveDrivers" class="driver-list"></ul>
+            </div>
+            <div class="driver-section">
+                <h3><span class="arrow">↓</span> Negative Drivers</h3>
+                <ul id="negativeDrivers" class="driver-list"></ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            Data: <span id="sourcesList">--</span>
+        </footer>
+    </div>
+
+    <script>
+        const bandIndex = (score) => {
+            if (score >= 70) return { label: 'Favorable' };
+            if (score >= 55) return { label: 'Constructive' };
+            if (score >= 45) return { label: 'Neutral' };
+            if (score >= 30) return { label: 'Cautious' };
+            return { label: 'Risk-Off' };
+        };
+
+        const formatUtc = (iso) => {
+            const date = new Date(iso);
+            return `${date.toLocaleString('en-US', {
+                timeZone: 'UTC',
+                month: 'short',
+                day: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })} UTC`;
+        };
+
+        const minutesAgo = (iso) => {
+            const now = new Date();
+            const then = new Date(iso);
+            return Math.max(0, Math.round((now - then) / 60000));
+        };
+
+        const makeAsciiBar = (score, total = 20) => {
+            const filled = Math.round((score / 100) * total);
+            const empty = total - filled;
+            return `<span class="filled">${'█'.repeat(filled)}</span><span class="empty">${'░'.repeat(empty)}</span>`;
+        };
+
+        const renderHeader = (data) => {
+            const timestamp = document.getElementById('timestamp');
+            const liveDot = document.getElementById('liveDot');
+            const liveStatus = document.getElementById('liveStatus');
+            const mins = minutesAgo(data.updatedAt);
+            const isStale = mins > 360;
+            timestamp.textContent = `${formatUtc(data.updatedAt)} · ${mins} min ago`;
+            liveStatus.textContent = isStale ? 'Stale' : 'Live';
+            liveDot.style.background = isStale ? '#f87171' : 'var(--text-secondary)';
+        };
+
+        const renderRegular = (data) => {
+            document.getElementById('scoreValue').textContent = data.score;
+            document.getElementById('scoreLabel').textContent = data.label || bandIndex(data.score).label;
+            document.getElementById('mainBar').innerHTML = makeAsciiBar(data.score);
+            document.getElementById('scoreChange').textContent = `${data.change24h >= 0 ? '+' : '−'}${Math.abs(data.change24h).toFixed(1)} vs 24h`;
+        };
+
+        const renderDca = (data) => {
+            const stocks = data.dca?.stocks ?? 0;
+            const crypto = data.dca?.crypto ?? 0;
+            const avg = Math.round((stocks + crypto) / 2);
+            document.getElementById('dcaOverall').textContent = avg;
+            document.getElementById('dcaLabel').textContent = bandIndex(avg).label;
+            document.getElementById('dcaBar').innerHTML = makeAsciiBar(avg);
+            document.getElementById('dcaInvestmentIndicator').textContent = `DCA Investments — ${avg >= 55 ? 'Favorable' : 'Not Favorable'}`;
+            document.getElementById('dcaStocks').textContent = stocks || '--';
+            document.getElementById('dcaCrypto').textContent = crypto || '--';
+        };
+
+        const renderCategories = (data) => {
+            const list = document.getElementById('categoryList');
+            list.innerHTML = data.categories.map((cat) => `
+                <div class="category-row">
+                    <span class="category-name">${cat.name}</span>
+                    <span class="category-bar">${makeAsciiBar(cat.score, 10)}</span>
+                    <span class="category-score">${cat.score}</span>
+                </div>
+                <div class="category-detail">${cat.summary || ''}</div>
+            `).join('');
+        };
+
+        const renderHistory = (data) => {
+            const rows = document.getElementById('historyRows');
+            rows.innerHTML = data.history.map((point) => {
+                const label = new Date(point.date).toLocaleString('en-US', { month: 'short', day: '2-digit' });
+                return `
+                    <div class="historical-row">
+                        <span class="historical-date">${label}</span>
+                        <span class="historical-bar">${makeAsciiBar(point.score, 20)}</span>
+                        <span class="historical-score">${point.score}</span>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        const renderDcaHistory = (data) => {
+            const rows = document.getElementById('dcaHistoryRows');
+            if (!data.dcaHistory) return;
+            rows.innerHTML = data.dcaHistory.map((point) => {
+                const label = new Date(point.date).toLocaleString('en-US', { month: 'short', day: '2-digit' });
+                return `
+                    <div class="historical-row">
+                        <span class="historical-date">${label}</span>
+                        <span class="historical-bar">${makeAsciiBar(point.stocks, 10)} ${makeAsciiBar(point.crypto, 10)}</span>
+                        <span class="historical-score">${point.stocks}/${point.crypto}</span>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        const renderDrivers = (data) => {
+            const positive = document.getElementById('positiveDrivers');
+            const negative = document.getElementById('negativeDrivers');
+            positive.innerHTML = data.drivers.positive.map((driver) => `<li><span class="bullet">—</span> ${driver}</li>`).join('');
+            negative.innerHTML = data.drivers.negative.map((driver) => `<li><span class="bullet">—</span> ${driver}</li>`).join('');
+        };
+
+        const renderStats = (data) => {
+            document.getElementById('statArticles').textContent = data.stats.articlesAnalyzed;
+            document.getElementById('statSources').textContent = data.stats.dataSources;
+            document.getElementById('statQuality').textContent = `${data.stats.dataQuality}%`;
+            document.getElementById('statRefresh').textContent = data.stats.updateFrequency;
+            document.getElementById('sourcesList').textContent = data.sources.join(' · ');
+        };
+
+        const renderAll = (data) => {
+            renderHeader(data);
+            renderRegular(data);
+            renderDca(data);
+            renderCategories(data);
+            renderHistory(data);
+            renderDcaHistory(data);
+            renderDrivers(data);
+            renderStats(data);
+        };
+
+        fetch('/index.json')
+            .then((res) => res.json())
+            .then(renderAll)
+            .catch(() => {
+                fetch('/mock-data.json')
+                    .then((res) => res.json())
+                    .then(renderAll)
+                    .catch(() => {});
+            });
+    </script>
+</body>
+</html>

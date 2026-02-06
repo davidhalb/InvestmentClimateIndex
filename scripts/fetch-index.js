@@ -186,14 +186,30 @@ const fetchBtcMarket = async () => {
   };
 };
 
-const GOLD_MARKET_CAP_EST = 34500000000000;
+const GOLD_TROY_OZ_PER_TONNE = 32150.7466;
+const GOLD_FALLBACK_TONNES = 216265;
+
+const fetchGoldAboveGroundTonnes = async () => {
+  try {
+    const html = await fetch('https://www.gold.org/goldhub/data/how-much-gold').then((res) => res.text());
+    const match = html.match(/Total above-ground stock \\(end-\\d{4}\\):\\s*([0-9,]+)\\s*tonnes/i);
+    if (match && match[1]) {
+      return Number(match[1].replace(/,/g, ''));
+    }
+  } catch (err) {
+    return GOLD_FALLBACK_TONNES;
+  }
+  return GOLD_FALLBACK_TONNES;
+};
 
 const fetchGoldMarket = async () => {
   const url = 'https://api.gold-api.com/price/XAU';
   const data = await fetchJson(url);
+  const tonnes = await fetchGoldAboveGroundTonnes();
+  const price = data.price || null;
   return {
-    price: data.price || null,
-    marketCap: GOLD_MARKET_CAP_EST,
+    price,
+    marketCap: price ? price * tonnes * GOLD_TROY_OZ_PER_TONNE : null,
     marketCapEstimate: true
   };
 };

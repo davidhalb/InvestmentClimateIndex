@@ -317,7 +317,10 @@ const aggregateScores = (items) => {
 
 const pickDrivers = (items, direction) => {
   const sorted = [...items].sort((a, b) => direction * (b.sentiment - a.sentiment));
-  return sorted.slice(0, 3).map((item) => item.title);
+  return sorted.slice(0, 3).map((item) => ({
+    title: item.title,
+    url: item.url
+  }));
 };
 
 const updateHistory = (history, score) => {

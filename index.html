@@ -879,8 +879,16 @@
         const renderDrivers = (data) => {
             const positive = document.getElementById('positiveDrivers');
             const negative = document.getElementById('negativeDrivers');
-            positive.innerHTML = data.drivers.positive.map((driver) => `<li><span class="bullet">—</span> ${driver}</li>`).join('');
-            negative.innerHTML = data.drivers.negative.map((driver) => `<li><span class="bullet">—</span> ${driver}</li>`).join('');
+            const renderItem = (driver) => {
+                if (typeof driver === 'string') {
+                    return `<li><span class="bullet">—</span> ${driver}</li>`;
+                }
+                const title = driver.title || '';
+                const url = driver.url || '#';
+                return `<li><span class="bullet">—</span> <a href="${url}" target="_blank" rel="noopener">${title}</a></li>`;
+            };
+            positive.innerHTML = data.drivers.positive.map(renderItem).join('');
+            negative.innerHTML = data.drivers.negative.map(renderItem).join('');
         };
 
         const renderStats = (data) => {

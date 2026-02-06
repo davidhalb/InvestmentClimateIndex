@@ -40,13 +40,13 @@
   ],
   "drivers": {
     "positive": [
-      "Fed signals extended rate pause through Q2",
-      "Bitcoin ETF sees record $800M daily inflow",
-      "Strong earnings from tech sector leaders"
+      { "title": "Fed signals extended rate pause through Q2", "url": "https://example.com/fed-pause" },
+      { "title": "Bitcoin ETF sees record $800M daily inflow", "url": "https://example.com/bitcoin-etf" },
+      { "title": "Strong earnings from tech sector leaders", "url": "https://example.com/tech-earnings" }
     ],
     "negative": [
-      "US-China trade tensions escalate",
-      "Reddit sentiment turns bearish on tech"
+      { "title": "US-China trade tensions escalate", "url": "https://example.com/trade-tensions" },
+      { "title": "Reddit sentiment turns bearish on tech", "url": "https://example.com/reddit-bearish" }
     ]
   },
   "stats": {

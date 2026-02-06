@@ -542,6 +542,26 @@
 
         <div class="layout">
             <main class="main-content">
+                <!-- Top Stats -->
+                <section class="stats" style="padding-top: 0; border-top: 0; margin-bottom: 32px;">
+                    <div class="stat">
+                        <div class="stat-value"><a id="statArticles" href="#news" style="color: inherit; text-decoration: none;">--</a></div>
+                        <div class="stat-label">Articles</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value"><a id="statSources" href="#news" style="color: inherit; text-decoration: none;">--</a></div>
+                        <div class="stat-label">Sources</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value"><a id="statQuality" href="#news" style="color: inherit; text-decoration: none;">--</a></div>
+                        <div class="stat-label">Quality</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value"><a id="statRefresh" href="#news" style="color: inherit; text-decoration: none;">--</a></div>
+                        <div class="stat-label">Refresh</div>
+                    </div>
+                </section>
+
                 <!-- Market Climate -->
                 <section class="main-score">
                     <div class="section-header">Market Climate</div>
@@ -579,27 +599,6 @@
                         <span>DCA Crypto: <strong id="dcaCrypto">--</strong></span>
                     </div>
                 </section>
-
-                <!-- Top Stats -->
-                <section class="stats" style="padding-top: 0; border-top: 0; margin-bottom: 32px;">
-                    <div class="stat">
-                        <div id="statArticles" class="stat-value">--</div>
-                        <div class="stat-label">Articles</div>
-                    </div>
-                    <div class="stat">
-                        <div id="statSources" class="stat-value">--</div>
-                        <div class="stat-label">Sources</div>
-                    </div>
-                    <div class="stat">
-                        <div id="statQuality" class="stat-value">--</div>
-                        <div class="stat-label">Quality</div>
-                    </div>
-                    <div class="stat">
-                        <div id="statRefresh" class="stat-value">--</div>
-                        <div class="stat-label">Refresh</div>
-                    </div>
-                </section>
-
                 <!-- Live Markets -->
                 <section class="markets">
                     <div class="section-header" style="margin-bottom: 12px;">Live Markets</div>
@@ -645,7 +644,7 @@
                 </section>
 
                 <!-- Key Drivers -->
-                <section class="drivers">
+                <section id="news" class="drivers">
                     <div class="driver-section">
                         <h3><span class="arrow">↑</span> Positive Drivers</h3>
                         <ul id="positiveDrivers" class="driver-list"></ul>

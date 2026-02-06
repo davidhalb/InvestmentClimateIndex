@@ -1,27 +1,27 @@
 {
-  "updatedAt": "2026-02-06T17:31:56.143Z",
+  "updatedAt": "2026-02-06T18:30:21.552Z",
   "score": 49,
   "label": null,
   "change24h": 0,
   "markets": {
     "btc": {
-      "price": 70969,
-      "marketCap": 1417232740494.7354
+      "price": 69447,
+      "marketCap": 1388623744120.5276
     },
     "gold": {
-      "price": 4967.5,
-      "marketCap": 34539430927807.906,
+      "price": 4951.700195,
+      "marketCap": 34429573600486.25,
       "marketCapEstimate": true
     },
     "sp500": {
-      "price": 6907.88,
+      "price": 6911.5,
       "marketCap": null,
       "marketCapProxy": "SPY"
     }
   },
   "dca": {
     "stocks": 48,
-    "crypto": 56
+    "crypto": 57
   },
   "categories": [
     {
@@ -34,13 +34,13 @@
       "name": "Micro Economic",
       "score": 47,
       "change": -0.3,
-      "summary": "Under Armour turns a surprise profit, even as turnaround plan costs keep rising"
+      "summary": "Jennifer Garner's Once Upon a Farm opens at $21 per share in market debut, after pricing IPO at $18"
     },
     {
       "name": "Stock Markets",
-      "score": 49,
-      "change": -0.1,
-      "summary": "Jim Cramer's top 10 things to watch in the stock market Friday"
+      "score": 50,
+      "change": 0,
+      "summary": "Stocks are rebounding Friday, but this week’s tech rout echoes lessons from the dot-com bubble"
     },
     {
       "name": "Crypto",
@@ -52,7 +52,7 @@
       "name": "Political",
       "score": 49,
       "change": -0.1,
-      "summary": "President Trump's tariffs fueled U.S. Customs bond market boom. Now billions hang on Supreme Court ruling"
+      "summary": "Nvidia’s stock shoots toward best day since April as tech sector rebounds"
     }
   ],
   "history": [
@@ -65,7 +65,7 @@
     {
       "date": "2026-02-06",
       "stocks": 48,
-      "crypto": 56
+      "crypto": 57
     }
   ],
   "drivers": {

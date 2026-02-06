@@ -1,27 +1,27 @@
 {
-  "updatedAt": "2026-02-06T17:01:48.970Z",
+  "updatedAt": "2026-02-06T17:12:48.375Z",
   "score": 49,
   "label": null,
   "change24h": 0,
   "markets": {
     "btc": {
-      "price": 69845,
-      "marketCap": 1399153617091.6199
+      "price": 70186,
+      "marketCap": 1396075168915.487
     },
     "gold": {
-      "price": 4955.899902,
-      "marketCap": 12000000000000,
+      "price": 4959.600098,
+      "marketCap": 34500000000000,
       "marketCapEstimate": true
     },
     "sp500": {
-      "price": null,
+      "price": 6904.71,
       "marketCap": null,
       "marketCapProxy": "SPY"
     }
   },
   "dca": {
-    "stocks": 49,
-    "crypto": 48
+    "stocks": 48,
+    "crypto": 49
   },
   "categories": [
     {
@@ -32,8 +32,8 @@
     },
     {
       "name": "Micro Economic",
-      "score": 49,
-      "change": -0.1,
+      "score": 47,
+      "change": -0.3,
       "summary": "Under Armour turns a surprise profit, even as turnaround plan costs keep rising"
     },
     {
@@ -44,14 +44,14 @@
     },
     {
       "name": "Crypto",
-      "score": 47,
-      "change": -0.3,
+      "score": 48,
+      "change": -0.2,
       "summary": "Amazon’s stock drops as investors question whether $200 billion can buy an AI edge"
     },
     {
       "name": "Political",
-      "score": 50,
-      "change": 0,
+      "score": 49,
+      "change": -0.1,
       "summary": "President Trump's tariffs fueled U.S. Customs bond market boom. Now billions hang on Supreme Court ruling"
     }
   ],
@@ -64,8 +64,8 @@
   "dcaHistory": [
     {
       "date": "2026-02-06",
-      "stocks": 49,
-      "crypto": 48
+      "stocks": 48,
+      "crypto": 49
     }
   ],
   "drivers": {
@@ -79,8 +79,8 @@
         "url": "https://www.bloomberg.com/news/articles/2026-02-04/boeing-to-cut-around-300-defense-division-supply-chain-jobs"
       },
       {
-        "title": "Goldman Sachs bucks Warsh Fed rate cut worry - thestreet.com",
-        "url": "https://www.thestreet.com/fed/goldman-sachs-resets-fed-rate-cut-outlook-under-warsh"
+        "title": "E.l.f. Beauty stock soars 15% on big earnings beat, raised guidance",
+        "url": "https://www.cnbc.com/2026/02/04/elf-beauty-elf-q3-2026.html"
       }
     ],
     "negative": [
@@ -99,7 +99,7 @@
     ]
   },
   "stats": {
-    "articlesAnalyzed": 123,
+    "articlesAnalyzed": 122,
     "dataSources": 3,
     "dataQuality": 95,
     "updateFrequency": "1h"

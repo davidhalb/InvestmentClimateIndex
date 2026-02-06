@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-02-06T15:57:45.231Z",
+  "updatedAt": "2026-02-06T16:28:51.411Z",
   "score": 49,
   "label": null,
   "change24h": 0,
   "markets": {
     "btc": {
-      "price": 68513,
-      "marketCap": 1367210547045.2402
+      "price": 69531,
+      "marketCap": 1391783738017.8633
     },
     "gold": {
       "price": null,
@@ -14,7 +14,7 @@
       "marketCapEstimate": true
     },
     "sp500": {
-      "price": 685.33,
+      "price": 686.76,
       "marketCap": null,
       "marketCapProxy": "SPY"
     }
@@ -28,7 +28,7 @@
       "name": "Macro Economic",
       "score": 49,
       "change": -0.1,
-      "summary": "Super Bowl LX is turning into AI’s coming-out party"
+      "summary": "3 signs your DoorDash or UberEats habit is wrecking your financial health"
     },
     {
       "name": "Micro Economic",

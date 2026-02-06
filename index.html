@@ -54,6 +54,34 @@
             margin-bottom: 8px;
         }
 
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.08em;
+            background: #0f0f0f;
+        }
+
+        .site-name {
+            font-size: 13px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
         .title {
             font-size: 11px;
             letter-spacing: 0.15em;
@@ -372,6 +400,72 @@
             color: var(--text-primary);
         }
 
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 280px;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .side-panel {
+            position: sticky;
+            top: 24px;
+            align-self: start;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            background: var(--bg-elevated);
+        }
+
+        .panel-title {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .trade-list {
+            display: grid;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .trade-asset {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .trade-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .trade-links a:hover {
+            text-decoration: underline;
+        }
+
+        .disclosure {
+            margin-top: 10px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
         .markets {
             margin-bottom: 32px;
             border: 1px solid var(--border);
@@ -430,7 +524,13 @@
         <!-- Header -->
         <header class="header">
             <div class="header-top">
-                <span class="title">Global Investment Climate Index</span>
+                <div class="brand">
+                    <div class="logo">ICI</div>
+                    <div>
+                        <div class="site-name">ICI.ndex</div>
+                        <div class="title">Global Investment Climate Index</div>
+                    </div>
+                </div>
                 <div class="live-indicator">
                     <span id="liveDot" class="live-dot"></span>
                     <span id="liveStatus">Live</span>
@@ -440,153 +540,212 @@
             <div id="lastUpdated" class="date" style="margin-top: 2px;">Last updated: --</div>
         </header>
 
-        <!-- Top Stats -->
-        <section class="stats" style="padding-top: 0; border-top: 0; margin-bottom: 32px;">
-            <div class="stat">
-                <div id="statArticles" class="stat-value">--</div>
-                <div class="stat-label">Articles</div>
-            </div>
-            <div class="stat">
-                <div id="statSources" class="stat-value">--</div>
-                <div class="stat-label">Sources</div>
-            </div>
-            <div class="stat">
-                <div id="statQuality" class="stat-value">--</div>
-                <div class="stat-label">Quality</div>
-            </div>
-            <div class="stat">
-                <div id="statRefresh" class="stat-value">--</div>
-                <div class="stat-label">Refresh</div>
-            </div>
-        </section>
+        <div class="layout">
+            <main class="main-content">
+                <!-- Market Climate -->
+                <section class="main-score">
+                    <div class="section-header">Market Climate</div>
+                    <div class="score-display">
+                        <span id="scoreValue" class="score-number">--</span>
+                        <span class="score-max">/100</span>
+                    </div>
+                    <div id="scoreLabel" class="score-label">--</div>
+                    <div id="mainBar" class="ascii-bar"></div>
+                    <div class="bar-labels">
+                        <span>Unfavorable</span>
+                        <span>Favorable</span>
+                    </div>
+                    <div class="dca-meta">
+                        <span id="scoreChange">--</span>
+                    </div>
+                </section>
 
-        <section class="markets">
-            <div class="section-header" style="margin-bottom: 12px;">Live Markets</div>
-            <div class="market-row" style="padding-top: 0; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;">
-                <div class="market-label">Asset</div>
-                <div class="market-value">Price</div>
-                <div class="market-value">MCap</div>
-            </div>
-            <div class="market-row">
-                <div class="market-label">BTC</div>
-                <div id="btcPrice" class="market-value">--</div>
-                <div id="btcMarketCap" class="market-value">--</div>
-            </div>
-            <div class="market-row">
-                <div class="market-label">Gold</div>
-                <div id="goldPrice" class="market-value">--</div>
-                <div id="goldMarketCap" class="market-value">--</div>
-            </div>
-            <div class="market-row">
-                <div class="market-label">S&amp;P 500</div>
-                <div id="spPrice" class="market-value">--</div>
-                <div id="spMarketCap" class="market-value">--</div>
-            </div>
-            <div class="market-note">S&amp;P 500 market cap shown as SPY ETF proxy.</div>
-        </section>
+                <!-- DCA Readiness -->
+                <section class="dca-section">
+                    <div class="section-header">DCA Readiness</div>
+                    <div class="score-display">
+                        <span id="dcaOverall" class="score-number">--</span>
+                        <span class="score-max">/100</span>
+                    </div>
+                    <div id="dcaLabel" class="score-label">--</div>
+                    <div id="dcaBar" class="ascii-bar"></div>
+                    <div class="bar-labels">
+                        <span>Not Favorable</span>
+                        <span>Favorable</span>
+                    </div>
+                    <div id="dcaInvestmentIndicator" class="dca-meta">DCA Readiness — --</div>
+                    <div class="dca-badges">
+                        <span>DCA Stocks: <strong id="dcaStocks">--</strong></span>
+                        <span>DCA Crypto: <strong id="dcaCrypto">--</strong></span>
+                    </div>
+                </section>
 
-        <!-- Regular Investor View -->
-        <section class="main-score">
-            <div class="section-header">Market Climate</div>
-            <div class="score-display">
-                <span id="scoreValue" class="score-number">--</span>
-                <span class="score-max">/100</span>
-            </div>
-            <div id="scoreLabel" class="score-label">--</div>
-            <div id="mainBar" class="ascii-bar"></div>
-            <div class="bar-labels">
-                <span>Unfavorable</span>
-                <span>Favorable</span>
-            </div>
-            <div class="dca-meta">
-                <span id="scoreChange">--</span>
-            </div>
-        </section>
+                <!-- Top Stats -->
+                <section class="stats" style="padding-top: 0; border-top: 0; margin-bottom: 32px;">
+                    <div class="stat">
+                        <div id="statArticles" class="stat-value">--</div>
+                        <div class="stat-label">Articles</div>
+                    </div>
+                    <div class="stat">
+                        <div id="statSources" class="stat-value">--</div>
+                        <div class="stat-label">Sources</div>
+                    </div>
+                    <div class="stat">
+                        <div id="statQuality" class="stat-value">--</div>
+                        <div class="stat-label">Quality</div>
+                    </div>
+                    <div class="stat">
+                        <div id="statRefresh" class="stat-value">--</div>
+                        <div class="stat-label">Refresh</div>
+                    </div>
+                </section>
 
-        <!-- How to Read the Index -->
-        <section class="historical">
-            <div class="section-header">How to Read the Index</div>
-            <div class="category-detail">
-                <strong>Market Climate</strong> shows the overall market environment (0–100). Higher means a more favorable environment for risk‑taking.
-            </div>
-            <div class="category-detail">
-                <strong>DCA Readiness</strong> is separate and focuses on long‑term, steady buying conditions. It blends macro, political and asset‑specific signals.
-            </div>
-            <div class="category-detail">
-                <strong>Labels</strong> map to the score: Risk‑Off (0–29), Cautious (30–44), Neutral (45–54), Constructive (55–69), Favorable (70–100).
-            </div>
-        </section>
+                <!-- Live Markets -->
+                <section class="markets">
+                    <div class="section-header" style="margin-bottom: 12px;">Live Markets</div>
+                    <div class="market-row" style="padding-top: 0; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;">
+                        <div class="market-label">Asset</div>
+                        <div class="market-value">Price</div>
+                        <div class="market-value">MCap</div>
+                    </div>
+                    <div class="market-row">
+                        <div class="market-label">BTC</div>
+                        <div id="btcPrice" class="market-value">--</div>
+                        <div id="btcMarketCap" class="market-value">--</div>
+                    </div>
+                    <div class="market-row">
+                        <div class="market-label">Gold</div>
+                        <div id="goldPrice" class="market-value">--</div>
+                        <div id="goldMarketCap" class="market-value">--</div>
+                    </div>
+                    <div class="market-row">
+                        <div class="market-label">S&amp;P 500</div>
+                        <div id="spPrice" class="market-value">--</div>
+                        <div id="spMarketCap" class="market-value">--</div>
+                    </div>
+                    <div class="market-note">S&amp;P 500 market cap shown as SPY ETF proxy.</div>
+                </section>
 
-        <!-- Methodology -->
-        <section class="historical">
-            <div class="section-header">Methodology</div>
-            <div class="category-detail">
-                Sources are clustered into macro, micro, stocks, crypto, and political buckets. Each article is scored for sentiment and relevance.
-            </div>
-            <div class="category-detail">
-                Category scores roll up into the Market Climate. DCA Readiness blends macro, political, and asset‑specific signals to reflect long‑term buy conditions.
-            </div>
-            <div class="category-detail">
-                Scores are normalized to 0–100 and updated hourly. Market caps for S&amp;P 500 use the SPY ETF as a proxy.
-            </div>
-        </section>
+                <!-- Category Breakdown -->
+                <section class="categories">
+                    <div class="section-header">Category Breakdown</div>
+                    <div id="categoryList"></div>
+                </section>
 
-        <!-- DCA Investor View -->
-        <section class="dca-section">
-            <div class="section-header">DCA Readiness</div>
-            <div class="score-display">
-                <span id="dcaOverall" class="score-number">--</span>
-                <span class="score-max">/100</span>
-            </div>
-            <div id="dcaLabel" class="score-label">--</div>
-            <div id="dcaBar" class="ascii-bar"></div>
-            <div class="bar-labels">
-                <span>Not Favorable</span>
-                <span>Favorable</span>
-            </div>
-            <div id="dcaInvestmentIndicator" class="dca-meta">DCA Readiness — --</div>
-            <div class="dca-badges">
-                <span>DCA Stocks: <strong id="dcaStocks">--</strong></span>
-                <span>DCA Crypto: <strong id="dcaCrypto">--</strong></span>
-            </div>
-        </section>
+                <!-- 7-Day History -->
+                <section class="historical">
+                    <div class="section-header">7-Day History</div>
+                    <div id="historyRows"></div>
+                </section>
 
-        <!-- Category Breakdown -->
-        <section class="categories">
-            <div class="section-header">Category Breakdown</div>
-            <div id="categoryList"></div>
-        </section>
+                <!-- DCA History -->
+                <section class="historical">
+                    <div class="section-header">DCA History</div>
+                    <div id="dcaHistoryRows"></div>
+                </section>
 
-        <!-- 7-Day History -->
-        <section class="historical">
-            <div class="section-header">7-Day History</div>
-            <div id="historyRows"></div>
-        </section>
+                <!-- Key Drivers -->
+                <section class="drivers">
+                    <div class="driver-section">
+                        <h3><span class="arrow">↑</span> Positive Drivers</h3>
+                        <ul id="positiveDrivers" class="driver-list"></ul>
+                    </div>
+                    <div class="driver-section">
+                        <h3><span class="arrow">↓</span> Negative Drivers</h3>
+                        <ul id="negativeDrivers" class="driver-list"></ul>
+                    </div>
+                </section>
 
-        <!-- DCA History -->
-        <section class="historical">
-            <div class="section-header">DCA History</div>
-            <div id="dcaHistoryRows"></div>
-        </section>
+                <!-- How to Read the Index -->
+                <section class="historical">
+                    <div class="section-header">How to Read the Index</div>
+                    <div class="category-detail">
+                        <strong>Market Climate</strong> shows the overall market environment (0–100). Higher means a more favorable environment for risk‑taking.
+                    </div>
+                    <div class="category-detail">
+                        <strong>DCA Readiness</strong> is separate and focuses on long‑term, steady buying conditions. It blends macro, political and asset‑specific signals.
+                    </div>
+                    <div class="category-detail">
+                        <strong>Labels</strong> map to the score: Risk‑Off (0–29), Cautious (30–44), Neutral (45–54), Constructive (55–69), Favorable (70–100).
+                    </div>
+                </section>
 
-        <!-- Key Drivers -->
-        <section class="drivers">
-            <div class="driver-section">
-                <h3><span class="arrow">↑</span> Positive Drivers</h3>
-                <ul id="positiveDrivers" class="driver-list"></ul>
-            </div>
-            <div class="driver-section">
-                <h3><span class="arrow">↓</span> Negative Drivers</h3>
-                <ul id="negativeDrivers" class="driver-list"></ul>
-            </div>
-        </section>
+                <!-- Methodology -->
+                <section class="historical">
+                    <div class="section-header">Methodology</div>
+                    <div class="category-detail">
+                        Sources are clustered into macro, micro, stocks, crypto, and political buckets. Each article is scored for sentiment and relevance.
+                    </div>
+                    <div class="category-detail">
+                        Category scores roll up into the Market Climate. DCA Readiness blends macro, political, and asset‑specific signals to reflect long‑term buy conditions.
+                    </div>
+                    <div class="category-detail">
+                        Scores are normalized to 0–100 and updated hourly. Market caps for S&amp;P 500 use the SPY ETF as a proxy.
+                    </div>
+                </section>
+            </main>
 
-        <!-- Footer -->
+            <aside class="side-panel">
+                <div class="panel">
+                    <div class="panel-title">Where to Trade</div>
+                    <div class="trade-list">
+                        <div>
+                            <div class="trade-asset">BTC</div>
+                            <div class="trade-links">
+                                <a href="https://www.binance.com/?utm_source=icindx0" target="_blank" rel="noopener">Binance</a>
+                                <a href="https://www.coinbase.com/?utm_source=icindx0" target="_blank" rel="noopener">Coinbase</a>
+                                <a href="https://www.revolut.com/?utm_source=icindx0" target="_blank" rel="noopener">Revolut</a>
+                                <a href="https://n26.com/?utm_source=icindx0" target="_blank" rel="noopener">N26</a>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="trade-asset">Gold</div>
+                            <div class="trade-links">
+                                <a href="https://www.binance.com/?utm_source=icindx0" target="_blank" rel="noopener">Binance</a>
+                                <a href="https://www.coinbase.com/?utm_source=icindx0" target="_blank" rel="noopener">Coinbase</a>
+                                <a href="https://www.revolut.com/?utm_source=icindx0" target="_blank" rel="noopener">Revolut</a>
+                                <a href="https://n26.com/?utm_source=icindx0" target="_blank" rel="noopener">N26</a>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="trade-asset">S&amp;P 500</div>
+                            <div class="trade-links">
+                                <a href="https://www.binance.com/?utm_source=icindx0" target="_blank" rel="noopener">Binance</a>
+                                <a href="https://www.coinbase.com/?utm_source=icindx0" target="_blank" rel="noopener">Coinbase</a>
+                                <a href="https://www.revolut.com/?utm_source=icindx0" target="_blank" rel="noopener">Revolut</a>
+                                <a href="https://n26.com/?utm_source=icindx0" target="_blank" rel="noopener">N26</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="disclosure">Affiliate links may earn a commission.</div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Comments</div>
+                    <hyvor-talk-comments website-id="14981" page-id="investment-climate-index"></hyvor-talk-comments>
+                    <div class="disclosure" style="margin-top: 12px;">
+                        Powered by <a href="https://talk.hyvor.com?partner=yy0x" target="_blank" rel="noopener">Hyvor</a>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Send Feedback</div>
+                    <iframe
+                        title="Feedback form"
+                        src="https://tally.so/r/Y5aNKJ"
+                        style="width: 100%; height: 320px; border: 0;"
+                    ></iframe>
+                </div>
+            </aside>
+        </div>
+
+<!-- Footer -->
         <footer class="footer">
             Data: <span id="sourcesList">--</span>
         </footer>
     </div>
 
+    <script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
     <script>
         const bandIndex = (score) => {
             if (score >= 70) return { label: 'Favorable' };
@@ -652,7 +811,7 @@
             const isStale = mins > 360;
             timestamp.textContent = `${formatUtc(data.updatedAt)} · ${mins} min ago`;
             liveStatus.textContent = isStale ? 'Stale' : 'Live';
-            liveDot.style.background = isStale ? '#f87171' : 'var(--text-secondary)';
+            liveDot.style.background = isStale ? '#f87171' : '#22c55e';
             const lastUpdated = document.getElementById('lastUpdated');
             if (lastUpdated) lastUpdated.textContent = `Last updated: ${formatUtc(data.updatedAt)}`;
         };
@@ -728,7 +887,7 @@
             document.getElementById('statArticles').textContent = data.stats.articlesAnalyzed;
             document.getElementById('statSources').textContent = data.stats.dataSources;
             document.getElementById('statQuality').textContent = `${data.stats.dataQuality}%`;
-            document.getElementById('statRefresh').textContent = data.stats.updateFrequency;
+            document.getElementById('statRefresh').textContent = '15s';
             document.getElementById('sourcesList').textContent = data.sources.join(' · ');
         };
 

@@ -129,6 +129,13 @@
             border-bottom: 1px solid var(--border);
         }
 
+        .section-header.prominent {
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: 0.28em;
+        }
+
         /* Main Score */
         .main-score {
             margin-bottom: 32px;
@@ -517,6 +524,74 @@
             margin-top: 8px;
         }
 
+        .signal {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+        }
+
+        .hero {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 20px 22px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: 22px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .hero-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .signal-title {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .signal-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .signal-badge {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .signal-green { border-color: #14532d; color: #86efac; }
+        .signal-yellow { border-color: #4a3b10; color: #fde047; }
+        .signal-red { border-color: #5f1d1d; color: #fca5a5; }
+
+        .change-block {
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: grid;
+            gap: 6px;
+        }
+
         /* Change indicators */
         .change {
             font-size: 11px;
@@ -574,7 +649,17 @@
                         <div class="stat-label">Refresh</div>
                     </div>
                 </section>
-<!-- Live Markets -->
+                <!-- Hero -->
+                <section class="hero">
+                    <div class="hero-title">The world’s market mood.</div>
+                    <div class="hero-sub">A market climate index that tells investors what the world is doing — right now.</div>
+                    <div class="signal-row">
+                        <div id="heroSignalText">Daily Signal: --</div>
+                        <div id="heroSignalBadge" class="signal-badge">--</div>
+                    </div>
+                </section>
+
+                <!-- Live Markets -->
                 <section class="markets">
                     <div class="section-header" style="margin-bottom: 12px;">Live Markets</div>
                     <div class="market-row" style="padding-top: 0; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;">
@@ -599,11 +684,21 @@
                     </div>
                     <div class="market-note">S&amp;P 500 market cap shown as SPY ETF proxy.</div>
                 </section>
+
+                <!-- What Changed Today -->
+                <section class="signal">
+                    <div class="signal-title">What Changed Today</div>
+                    <div class="change-block">
+                        <div id="changePositive">Top positive: --</div>
+                        <div id="changeNegative">Top negative: --</div>
+                        <div id="changeCategory">Biggest move: --</div>
+                    </div>
+                </section>
                 
                 <div class="score-grid">
                     <!-- Market Climate -->
                     <section class="main-score">
-                        <div class="section-header">Market Climate</div>
+                        <div class="section-header prominent">Market Climate</div>
                         <div class="score-display">
                             <span id="scoreValue" class="score-number">--</span>
                             <span class="score-max">/100</span>
@@ -621,7 +716,7 @@
 
                     <!-- DCA Readiness -->
                     <section class="dca-section">
-                        <div class="section-header">DCA Readiness</div>
+                        <div class="section-header prominent">DCA Readiness</div>
                         <div class="score-display">
                             <span id="dcaOverall" class="score-number">--</span>
                             <span class="score-max">/100</span>
@@ -913,6 +1008,48 @@
             document.getElementById('sourcesList').textContent = data.sources.join(' · ');
         };
 
+        const renderDailySignal = (data) => {
+            const badge = document.getElementById('heroSignalBadge');
+            const text = document.getElementById('heroSignalText');
+            const score = data.score ?? 0;
+            let label = 'Red';
+            let cls = 'signal-red';
+            if (score >= 70) {
+                label = 'Green';
+                cls = 'signal-green';
+            } else if (score >= 45) {
+                label = 'Yellow';
+                cls = 'signal-yellow';
+            }
+            badge.textContent = label;
+            badge.className = `signal-badge ${cls}`;
+            text.textContent = `Daily Signal: ${label}`;
+        };
+
+        const renderWhatChanged = (data) => {
+            const pos = document.getElementById('changePositive');
+            const neg = document.getElementById('changeNegative');
+            const cat = document.getElementById('changeCategory');
+            const positive = data.drivers?.positive?.[0];
+            const negative = data.drivers?.negative?.[0];
+            const posTitle = typeof positive === 'string' ? positive : positive?.title;
+            const negTitle = typeof negative === 'string' ? negative : negative?.title;
+
+            pos.textContent = `Top positive: ${posTitle || '--'}`;
+            neg.textContent = `Top negative: ${negTitle || '--'}`;
+
+            if (Array.isArray(data.categories) && data.categories.length) {
+                const largest = data.categories.reduce((acc, item) => {
+                    const current = Math.abs(item.change || 0);
+                    return current > Math.abs(acc.change || 0) ? item : acc;
+                }, data.categories[0]);
+                const direction = (largest.change || 0) >= 0 ? '+' : '';
+                cat.textContent = `Biggest move: ${largest.name} ${direction}${(largest.change || 0).toFixed(1)}`;
+            } else {
+                cat.textContent = 'Biggest move: --';
+            }
+        };
+
         const renderMarkets = (data) => {
             if (!data.markets) return;
             const btc = data.markets.btc || {};
@@ -937,6 +1074,8 @@
             renderRegular(data);
             renderDca(data);
             renderMarkets(data);
+            renderDailySignal(data);
+            renderWhatChanged(data);
             renderCategories(data);
             renderHistory(data);
             renderDcaHistory(data);

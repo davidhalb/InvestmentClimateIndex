@@ -1,1 +1,94 @@
-{}
+{
+  "updatedAt": "2026-02-06T15:39:14.221Z",
+  "score": 49,
+  "label": null,
+  "change24h": 0,
+  "markets": {
+    "btc": {
+      "price": 68401,
+      "marketCap": 1367166577972.3281
+    },
+    "gold": {
+      "price": null,
+      "marketCap": null,
+      "marketCapEstimate": true
+    },
+    "sp500": {
+      "price": 686,
+      "marketCap": null,
+      "marketCapProxy": "SPY"
+    }
+  },
+  "dca": {
+    "stocks": 49,
+    "crypto": 48
+  },
+  "categories": [
+    {
+      "name": "Macro Economic",
+      "score": 49,
+      "change": -0.1,
+      "summary": "Super Bowl LX is turning into AI’s coming-out party"
+    },
+    {
+      "name": "Micro Economic",
+      "score": 49,
+      "change": -0.1,
+      "summary": "Under Armour turns a surprise profit, even as turnaround plan costs keep rising"
+    },
+    {
+      "name": "Stock Markets",
+      "score": 49,
+      "change": -0.1,
+      "summary": "Jim Cramer's top 10 things to watch in the stock market Friday"
+    },
+    {
+      "name": "Crypto",
+      "score": 47,
+      "change": -0.3,
+      "summary": "Amazon’s stock drops as investors question whether $200 billion can buy an AI edge"
+    },
+    {
+      "name": "Political",
+      "score": 50,
+      "change": 0,
+      "summary": "President Trump's tariffs fueled U.S. Customs bond market boom. Now billions hang on Supreme Court ruling"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-02-06",
+      "score": 49
+    }
+  ],
+  "dcaHistory": [
+    {
+      "date": "2026-02-06",
+      "stocks": 49,
+      "crypto": 48
+    }
+  ],
+  "drivers": {
+    "positive": [
+      "Why Alphabet’s stock is falling despite booming cloud growth",
+      "Boeing to cut around 300 defence division supply chain jobs",
+      "Goldman Sachs bucks Warsh Fed rate cut worry - thestreet.com"
+    ],
+    "negative": [
+      "Qualcomm’s stock falls as memory constraints hit outlook",
+      "Silver falls as much as 13% as the volatility continues in metals",
+      "Corporate DEI index sees 65% drop in participation from Fortune 500 companies"
+    ]
+  },
+  "stats": {
+    "articlesAnalyzed": 123,
+    "dataSources": 3,
+    "dataQuality": 95,
+    "updateFrequency": "1h"
+  },
+  "sources": [
+    "CryptoPanic",
+    "Finnhub",
+    "NewsAPI"
+  ]
+}

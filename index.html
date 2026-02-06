@@ -687,7 +687,7 @@
 
                 <!-- What Changed Today -->
                 <section class="signal">
-                    <div class="signal-title">What Changed Today</div>
+                    <div class="signal-title">What Changed Today <a href="daily.html" style="color: inherit; text-decoration: none; font-size: 10px; margin-left: 8px;">(daily digest)</a></div>
                     <div class="change-block">
                         <div id="changePositive">Top positive: --</div>
                         <div id="changeNegative">Top negative: --</div>
@@ -790,6 +790,26 @@
                     </div>
                     <div class="category-detail">
                         Scores are normalized to 0–100 and updated hourly. Market caps for S&amp;P 500 use the SPY ETF as a proxy.
+                    </div>
+                </section>
+
+                <!-- API -->
+                <section class="historical">
+                    <div class="section-header">API</div>
+                    <div class="category-detail">
+                        Real‑time Market Climate + DCA Readiness, with daily signals and source links.
+                    </div>
+                    <div class="category-detail">
+                        Endpoints: <code>/v1/index</code>, <code>/v1/history</code>, <code>/v1/markets</code>, <code>/v1/drivers</code>
+                    </div>
+                    <div class="category-detail">
+                        Get API access at <strong>/api-keys.html</strong> (subscription required).
+                    </div>
+                    <div class="category-detail">
+                        Embed widget:
+                        <pre><code>&lt;div id="ici-widget"&gt;&lt;/div&gt;
+&lt;script src="YOUR_API_BASE/widget.js"&gt;&lt;/script&gt;
+&lt;script&gt;ICIWidget.load('#ici-widget','YOUR_API_KEY','YOUR_API_BASE')&lt;/script&gt;</code></pre>
                     </div>
                 </section>
             </main>
@@ -946,9 +966,18 @@
 
         const renderCategories = (data) => {
             const list = document.getElementById('categoryList');
+            const slugFor = (name) => {
+                const n = (name || '').toLowerCase();
+                if (n.includes('macro')) return 'macro';
+                if (n.includes('micro')) return 'micro';
+                if (n.includes('stock')) return 'stocks';
+                if (n.includes('crypto')) return 'crypto';
+                if (n.includes('political')) return 'political';
+                return 'macro';
+            };
             list.innerHTML = data.categories.map((cat) => `
                 <div class="category-row">
-                    <span class="category-name">${cat.name}</span>
+                    <span class="category-name"><a href="category.html?c=${slugFor(cat.name)}" style="color: inherit; text-decoration: none;">${cat.name}</a></span>
                     <span class="category-bar">${makeAsciiBar(cat.score, 10)}</span>
                     <span class="category-score">${cat.score}</span>
                 </div>

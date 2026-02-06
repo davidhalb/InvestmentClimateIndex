@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Category • ICI.ndex</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg:#0a0a0a; --border:#222; --text-primary:#e5e5e5; --text-secondary:#888; --text-muted:#555; --bar-filled:#d4d4d4; --bar-empty:#2a2a2a; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text-primary); }
+    .container { max-width: 900px; margin: 0 auto; padding: 36px 24px; }
+    .header { display:flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .title { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-secondary); }
+    .label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted); margin: 14px 0 8px; }
+    .score { font-size: 48px; font-weight: 700; }
+    .bar { font-size: 14px; letter-spacing: 2px; }
+    .bar .filled { color: var(--bar-filled); }
+    .bar .empty { color: var(--bar-empty); }
+    .row { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+    .back { color: var(--text-secondary); text-decoration: none; font-size: 11px; }
+    .mini-row { display:flex; align-items:center; gap:10px; font-size:11px; color: var(--text-secondary); padding: 6px 0; }
+    .mini-date { width: 60px; color: var(--text-muted); }
+    .mini-bar { flex: 1; letter-spacing: 1px; }
+    .mini-bar .filled { color: var(--bar-filled); }
+    .mini-bar .empty { color: var(--bar-empty); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <div class="title" id="catTitle">Category</div>
+        <div class="row" id="updated">Last updated: --</div>
+      </div>
+      <a class="back" href="index.html">Back to index</a>
+    </div>
+
+    <div class="label">Score</div>
+    <div class="score" id="catScore">--</div>
+    <div id="catLabel" class="row">--</div>
+    <div class="bar" id="catBar"></div>
+    <div class="row" id="catChange">--</div>
+
+    <div class="label">Summary</div>
+    <div class="row" id="catSummary">--</div>
+
+    <div class="label">7‑Day Trend (Market Climate)</div>
+    <div id="trend"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('c') || 'macro';
+    const map = {
+      macro: 'Macro Economic',
+      micro: 'Micro Economic',
+      stocks: 'Stock Markets',
+      crypto: 'Crypto',
+      political: 'Political'
+    };
+
+    const makeBar = (score, total = 16) => {
+      const filled = Math.round((score / 100) * total);
+      const empty = total - filled;
+      return `<span class="filled">${'█'.repeat(filled)}</span><span class="empty">${'░'.repeat(empty)}</span>`;
+    };
+
+    fetch('index.json')
+      .then((r) => r.json())
+      .then((data) => {
+        const label = map[slug] || 'Macro Economic';
+        document.getElementById('catTitle').textContent = label;
+        document.getElementById('updated').textContent = `Last updated: ${data.updatedAt || '--'}`;
+        const cat = (data.categories || []).find((c) => c.name === label) || {};
+        document.getElementById('catScore').textContent = cat.score ?? '--';
+        document.getElementById('catLabel').textContent = label;
+        document.getElementById('catBar').innerHTML = makeBar(cat.score || 0);
+        const change = cat.change != null ? `${cat.change >= 0 ? '+' : ''}${cat.change.toFixed(1)} vs 24h` : '--';
+        document.getElementById('catChange').textContent = change;
+        document.getElementById('catSummary').textContent = cat.summary || '--';
+
+        const trend = (data.history || []).map((point) => {
+          const label = new Date(point.date).toLocaleString('en-US', { month: 'short', day: '2-digit' });
+          return `<div class="mini-row"><span class="mini-date">${label}</span><span class="mini-bar">${makeBar(point.score)}</span><span>${point.score}</span></div>`;
+        }).join('');
+        document.getElementById('trend').innerHTML = trend;
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>

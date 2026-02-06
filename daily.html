@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Digest • ICI.ndex</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0a; --bg-elevated: #111; --border: #222;
+      --text-primary: #e5e5e5; --text-secondary: #888; --text-muted: #555;
+      --bar-filled: #d4d4d4; --bar-empty: #2a2a2a;
+    }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text-primary); }
+    .container { max-width: 900px; margin: 0 auto; padding: 36px 24px; }
+    .title { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-secondary); }
+    .header { display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .section { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; }
+    .label { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+    .row { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+    .row a { color: var(--text-primary); text-decoration: none; }
+    .row a:hover { text-decoration: underline; }
+    .signal { display:flex; gap: 12px; align-items: center; }
+    .badge { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 6px 10px; border:1px solid var(--border); border-radius: 4px; }
+    .green { border-color:#14532d; color:#86efac; }
+    .yellow { border-color:#4a3b10; color:#fde047; }
+    .red { border-color:#5f1d1d; color:#fca5a5; }
+    .mini-row { display:flex; align-items:center; gap: 10px; font-size: 11px; color: var(--text-secondary); padding: 6px 0; }
+    .mini-date { width: 60px; color: var(--text-muted); }
+    .mini-bar { flex: 1; letter-spacing: 1px; }
+    .mini-bar .filled { color: var(--bar-filled); }
+    .mini-bar .empty { color: var(--bar-empty); }
+    .back { color: var(--text-secondary); text-decoration: none; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <div class="title">Daily Digest</div>
+        <div class="row" id="updated">Last updated: --</div>
+      </div>
+      <a class="back" href="index.html">Back to index</a>
+    </div>
+
+    <div class="section">
+      <div class="label">Daily Signal</div>
+      <div class="signal">
+        <div id="signalText" class="row">--</div>
+        <div id="signalBadge" class="badge">--</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">What Changed Today</div>
+      <div id="pos" class="row">Top positive: --</div>
+      <div id="neg" class="row">Top negative: --</div>
+      <div id="big" class="row">Biggest move: --</div>
+    </div>
+
+    <div class="section">
+      <div class="label">Top Drivers</div>
+      <div id="drivers"></div>
+    </div>
+
+    <div class="section">
+      <div class="label">7‑Day Trend (Market Climate)</div>
+      <div id="trend"></div>
+    </div>
+  </div>
+
+  <script>
+    const makeBar = (score, total = 16) => {
+      const filled = Math.round((score / 100) * total);
+      const empty = total - filled;
+      return `<span class="filled">${'█'.repeat(filled)}</span><span class="empty">${'░'.repeat(empty)}</span>`;
+    };
+    const signalFromScore = (score) => score >= 70 ? 'Green' : score >= 45 ? 'Yellow' : 'Red';
+
+    fetch('index.json')
+      .then((r) => r.json())
+      .then((data) => {
+        document.getElementById('updated').textContent = `Last updated: ${data.updatedAt || '--'}`;
+        const signal = signalFromScore(data.score || 0);
+        const badge = document.getElementById('signalBadge');
+        badge.textContent = signal;
+        badge.className = `badge ${signal === 'Green' ? 'green' : signal === 'Yellow' ? 'yellow' : 'red'}`;
+        document.getElementById('signalText').textContent = `Market Climate Signal: ${signal}`;
+
+        const positive = data.drivers?.positive?.[0];
+        const negative = data.drivers?.negative?.[0];
+        const posTitle = typeof positive === 'string' ? positive : positive?.title;
+        const negTitle = typeof negative === 'string' ? negative : negative?.title;
+
+        document.getElementById('pos').textContent = `Top positive: ${posTitle || '--'}`;
+        document.getElementById('neg').textContent = `Top negative: ${negTitle || '--'}`;
+
+        if (Array.isArray(data.categories) && data.categories.length) {
+          const largest = data.categories.reduce((acc, item) => {
+            const current = Math.abs(item.change || 0);
+            return current > Math.abs(acc.change || 0) ? item : acc;
+          }, data.categories[0]);
+          const direction = (largest.change || 0) >= 0 ? '+' : '';
+          document.getElementById('big').textContent = `Biggest move: ${largest.name} ${direction}${(largest.change || 0).toFixed(1)}`;
+        }
+
+        const driverList = [];
+        (data.drivers?.positive || []).slice(0,3).forEach((d) => {
+          const title = typeof d === 'string' ? d : d?.title;
+          const url = typeof d === 'string' ? null : d?.url;
+          driverList.push(`<div class="row">↑ ${url ? `<a href="${url}" target="_blank" rel="noopener">${title}</a>` : title}</div>`);
+        });
+        (data.drivers?.negative || []).slice(0,3).forEach((d) => {
+          const title = typeof d === 'string' ? d : d?.title;
+          const url = typeof d === 'string' ? null : d?.url;
+          driverList.push(`<div class="row">↓ ${url ? `<a href="${url}" target="_blank" rel="noopener">${title}</a>` : title}</div>`);
+        });
+        document.getElementById('drivers').innerHTML = driverList.join('');
+
+        const trend = (data.history || []).map((point) => {
+          const label = new Date(point.date).toLocaleString('en-US', { month: 'short', day: '2-digit' });
+          return `<div class="mini-row"><span class="mini-date">${label}</span><span class="mini-bar">${makeBar(point.score)}</span><span>${point.score}</span></div>`;
+        }).join('');
+        document.getElementById('trend').innerHTML = trend;
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>

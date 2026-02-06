@@ -742,11 +742,11 @@
             renderStats(data);
         };
 
-        fetch('/index.json')
+        fetch('index.json')
             .then((res) => res.json())
             .then(renderAll)
             .catch(() => {
-                fetch('/mock-data.json')
+                fetch('mock-data.json')
                     .then((res) => res.json())
                     .then(renderAll)
                     .catch(() => {});

@@ -3,12 +3,86 @@ import express from 'express';
 import cors from 'cors';
 import Stripe from 'stripe';
 import { db, getKeyByHash, insertKey, updateKeySubscription, addAlert } from './db.js';
-import { generateKey, hashKey, loadIndex, signalFromScore, whatChanged } from './utils.js';
+import { generateKey, hashKey, signalFromScore, whatChanged } from './utils.js';
 import path from 'path';
 import fs from 'fs';
 
 const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
+
+const CACHE = {
+  data: null,
+  dataUpdatedAt: null,
+  marketsUpdatedAt: null
+};
+
+const INDEX_JSON_URL = process.env.INDEX_JSON_URL || 'https://yy0x.github.io/InvestmentClimateIndex/index.json';
+
+const fetchJson = async (url, headers = {}) => {
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error(`Fetch failed ${res.status}`);
+  return res.json();
+};
+
+const fetchBtcMarket = async () => {
+  const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true';
+  const data = await fetchJson(url);
+  const btc = data.bitcoin || {};
+  return { price: btc.usd || null, marketCap: btc.usd_market_cap || null };
+};
+
+const fetchGoldMarket = async () => {
+  const url = 'https://api.gold-api.com/price/XAU';
+  const data = await fetchJson(url);
+  return { price: data.price || null, marketCap: null, marketCapEstimate: true };
+};
+
+const fetchSpx = async () => {
+  const csv = await fetch('https://stooq.com/q/l/?s=^spx&f=sd2t2ohlcv&h&e=csv').then((res) => res.text());
+  const lines = csv.trim().split('\n');
+  if (lines.length >= 2) {
+    const parts = lines[1].split(',');
+    const close = Number(parts[6]);
+    return Number.isFinite(close) ? close : null;
+  }
+  return null;
+};
+
+const fetchSp500Market = async () => {
+  let spxPrice = null;
+  try { spxPrice = await fetchSpx(); } catch (e) { spxPrice = null; }
+  return { price: spxPrice, marketCap: null, marketCapProxy: 'SPY' };
+};
+
+const refreshBaseData = async () => {
+  try {
+    const payload = await fetchJson(INDEX_JSON_URL);
+    CACHE.data = payload;
+    CACHE.dataUpdatedAt = new Date().toISOString();
+  } catch (err) {
+    // keep last cache
+  }
+};
+
+const refreshMarkets = async () => {
+  if (!CACHE.data) return;
+  try {
+    const [btc, gold, sp500] = await Promise.all([
+      fetchBtcMarket(),
+      fetchGoldMarket(),
+      fetchSp500Market()
+    ]);
+    CACHE.data.markets = { btc, gold, sp500 };
+    CACHE.marketsUpdatedAt = new Date().toISOString();
+  } catch (err) {
+    // keep last markets
+  }
+};
+
+// initial load + loops
+refreshBaseData();
+setInterval(refreshBaseData, 5 * 60 * 1000);
+setInterval(refreshMarkets, 15 * 1000);
 
 app.use(cors());
 app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
@@ -25,8 +99,18 @@ const requireKey = (req, res, next) => {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
+app.get('/public/index', (req, res) => {
+  if (!CACHE.data) return res.status(503).json({ error: 'Index not ready' });
+  res.json({
+    ...CACHE.data,
+    signal: signalFromScore(CACHE.data.score || 0),
+    dataUpdatedAt: CACHE.dataUpdatedAt,
+    marketsUpdatedAt: CACHE.marketsUpdatedAt
+  });
+});
+
 app.get('/v1/index', requireKey, (req, res) => {
-  const payload = loadIndex();
+  const payload = CACHE.data;
   if (!payload) return res.status(503).json({ error: 'Index not ready' });
   const signal = signalFromScore(payload.score || 0);
   res.json({
@@ -42,19 +126,19 @@ app.get('/v1/index', requireKey, (req, res) => {
 });
 
 app.get('/v1/history', requireKey, (req, res) => {
-  const payload = loadIndex();
+  const payload = CACHE.data;
   if (!payload) return res.status(503).json({ error: 'Index not ready' });
   res.json({ version: 'v1', history: payload.history, dcaHistory: payload.dcaHistory });
 });
 
 app.get('/v1/markets', requireKey, (req, res) => {
-  const payload = loadIndex();
+  const payload = CACHE.data;
   if (!payload) return res.status(503).json({ error: 'Index not ready' });
   res.json({ version: 'v1', markets: payload.markets });
 });
 
 app.get('/v1/drivers', requireKey, (req, res) => {
-  const payload = loadIndex();
+  const payload = CACHE.data;
   if (!payload) return res.status(503).json({ error: 'Index not ready' });
   res.json({ version: 'v1', drivers: payload.drivers, whatChanged: whatChanged(payload) });
 });

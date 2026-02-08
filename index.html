@@ -689,6 +689,7 @@
                     <a class="quick-link" href="category.html?c=stocks">Stocks</a>
                     <a class="quick-link" href="category.html?c=crypto">Crypto</a>
                     <a class="quick-link" href="category.html?c=political">Political</a>
+                    <a class="quick-link" href="api.html">API</a>
                 </div>
 
                 <!-- Live Markets -->
@@ -824,26 +825,6 @@
                         Scores are normalized to 0–100 and updated hourly. Market caps for S&amp;P 500 use the SPY ETF as a proxy.
                     </div>
                 </section>
-
-                <!-- API -->
-                <section class="historical">
-                    <div class="section-header">API</div>
-                    <div class="category-detail">
-                        Real‑time Market Climate + DCA Readiness, with daily signals and source links.
-                    </div>
-                    <div class="category-detail">
-                        Endpoints: <code>/v1/index</code>, <code>/v1/history</code>, <code>/v1/markets</code>, <code>/v1/drivers</code>
-                    </div>
-                    <div class="category-detail">
-                        Get API access at <strong>/api-keys.html</strong> (subscription required).
-                    </div>
-                    <div class="category-detail">
-                        Embed widget:
-                        <pre><code>&lt;div id="ici-widget"&gt;&lt;/div&gt;
-&lt;script src="YOUR_API_BASE/widget.js"&gt;&lt;/script&gt;
-&lt;script&gt;ICIWidget.load('#ici-widget','YOUR_API_KEY','YOUR_API_BASE')&lt;/script&gt;</code></pre>
-                    </div>
-                </section>
             </main>
 
             <aside class="side-panel">
@@ -974,7 +955,10 @@
             liveStatus.textContent = isStale ? 'Stale' : 'Live';
             liveDot.style.background = isStale ? '#f87171' : '#22c55e';
             const lastUpdated = document.getElementById('lastUpdated');
-            if (lastUpdated) lastUpdated.textContent = `Last updated: ${formatUtc(data.updatedAt)}`;
+            if (lastUpdated) {
+                const marketTime = data.marketsUpdatedAt ? ` · Markets: ${formatUtc(data.marketsUpdatedAt)}` : '';
+                lastUpdated.textContent = `Last updated: ${formatUtc(data.updatedAt)}${marketTime}`;
+            }
         };
 
         const renderRegular = (data) => {
@@ -1144,7 +1128,8 @@
             renderStats(data);
         };
 
-        const fetchData = () => fetch('index.json')
+        const API_BASE = 'https://investmentclimateindex-production.up.railway.app';
+        const fetchData = () => fetch(`${API_BASE}/public/index`)
             .then((res) => res.json())
             .then(renderAll)
             .catch(() => {

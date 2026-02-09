@@ -837,20 +837,10 @@
                                 <a href="https://www.binance.com/?utm_source=icindx0" target="_blank" rel="noopener">Binance</a>
                                 <a href="https://www.coinbase.com/?utm_source=icindx0" target="_blank" rel="noopener">Coinbase</a>
                                 <a href="https://www.revolut.com/?utm_source=icindx0" target="_blank" rel="noopener">Revolut</a>
-                                <a href="https://n26.com/?utm_source=icindx0" target="_blank" rel="noopener">N26</a>
                             </div>
                         </div>
                         <div>
-                            <div class="trade-asset">Gold</div>
-                            <div class="trade-links">
-                                <a href="https://www.binance.com/?utm_source=icindx0" target="_blank" rel="noopener">Binance</a>
-                                <a href="https://www.coinbase.com/?utm_source=icindx0" target="_blank" rel="noopener">Coinbase</a>
-                                <a href="https://www.revolut.com/?utm_source=icindx0" target="_blank" rel="noopener">Revolut</a>
-                                <a href="https://n26.com/?utm_source=icindx0" target="_blank" rel="noopener">N26</a>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="trade-asset">S&amp;P 500</div>
+                            <div class="trade-asset">Gold + S&amp;P 500</div>
                             <div class="trade-links">
                                 <a href="https://www.binance.com/?utm_source=icindx0" target="_blank" rel="noopener">Binance</a>
                                 <a href="https://www.coinbase.com/?utm_source=icindx0" target="_blank" rel="noopener">Coinbase</a>
@@ -915,6 +905,16 @@
             return Math.max(0, Math.round((now - then) / 60000));
         };
 
+        const secondsAgo = (iso) => {
+            const now = new Date();
+            const then = new Date(iso);
+            return Math.max(0, Math.round((now - then) / 1000));
+        };
+
+        const pickUpdatedAt = (data) => {
+            return data.signalUpdatedAt || data.dataUpdatedAt || data.updatedAt || data.marketsUpdatedAt || null;
+        };
+
         const makeAsciiBar = (score, total = 20) => {
             const filled = Math.round((score / 100) * total);
             const empty = total - filled;
@@ -949,15 +949,19 @@
             const timestamp = document.getElementById('timestamp');
             const liveDot = document.getElementById('liveDot');
             const liveStatus = document.getElementById('liveStatus');
-            const mins = minutesAgo(data.updatedAt);
-            const isStale = mins > 360;
-            timestamp.textContent = `${formatUtc(data.updatedAt)} · ${mins} min ago`;
+            const updatedAt = pickUpdatedAt(data);
+            const secs = updatedAt ? secondsAgo(updatedAt) : null;
+            const mins = updatedAt ? minutesAgo(updatedAt) : null;
+            const isStale = updatedAt ? secs > 90 : true;
+            timestamp.textContent = updatedAt ? `${formatUtc(updatedAt)} · ${mins} min ago` : '--';
             liveStatus.textContent = isStale ? 'Stale' : 'Live';
             liveDot.style.background = isStale ? '#f87171' : '#22c55e';
             const lastUpdated = document.getElementById('lastUpdated');
             if (lastUpdated) {
                 const marketTime = data.marketsUpdatedAt ? ` · Markets: ${formatUtc(data.marketsUpdatedAt)}` : '';
-                lastUpdated.textContent = `Last updated: ${formatUtc(data.updatedAt)}${marketTime}`;
+                lastUpdated.textContent = updatedAt
+                    ? `Last updated: ${formatUtc(updatedAt)}${marketTime}`
+                    : `Last updated: --${marketTime}`;
             }
         };
 
